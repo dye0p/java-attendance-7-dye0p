@@ -4,6 +4,8 @@ import camp.nextstep.edu.missionutils.Console;
 
 public class InputView {
 
+    private static final String NEXT_LINE = System.lineSeparator();
+
     public String readOption() {
         System.out.println("1. 출석 확인");
         System.out.println("2. 출석 수정");
@@ -13,11 +15,17 @@ public class InputView {
 
         String option = Console.readLine().trim();
 
-        if (!option.equals("1") && !option.equals("2") && !option.equals("3") && !option.equals("4")
-                && !option.equals("Q")) {
+        if (!option.equals("1") && !option.equals("2") && !option.equals("3") && !option.equals("4") && !option.equals(
+                "Q")) {
             throw new IllegalArgumentException("[ERROR] 잘못된 형식을 입력하였습니다.");
         }
 
         return option;
+    }
+
+    public String readNickName() {
+        System.out.println(NEXT_LINE + "닉네임을 입력해 주세요.");
+
+        return Console.readLine().trim();
     }
 }

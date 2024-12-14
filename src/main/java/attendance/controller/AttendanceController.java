@@ -1,10 +1,14 @@
 package attendance.controller;
 
+import attendance.model.Attendance;
+import attendance.model.Attendances;
 import attendance.model.DayOfWeek;
+import attendance.util.CrewFileReader;
 import attendance.view.InputView;
 import attendance.view.OutputView;
 import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class AttendanceController {
 
@@ -17,6 +21,10 @@ public class AttendanceController {
     }
 
     public void run() {
+        CrewFileReader crewFileReader = new CrewFileReader();
+        List<Attendance> attendanceList = crewFileReader.attendancesReader();
+        Attendances attendances = new Attendances(attendanceList);
+
         //오늘의 날짜를 가져옴.
         LocalDateTime now = DateTimes.now();
 
@@ -24,7 +32,17 @@ public class AttendanceController {
         int dayOfMonth = now.getDayOfMonth(); //일
         String dayOfWeek = DayOfWeek.of(now.getDayOfWeek().getValue()); //요일
 
+        //기능 선택 입력
         outputView.printToday(monthValue, dayOfMonth, dayOfWeek);
         String option = inputView.readOption();
+
+        //기능이 1번인 경우
+        if (option.equals("1")) {
+            //닉네임 입력
+            String name = inputView.readNickName();
+
+            //닉네임 존재 확인
+            attendances.isContain(name);
+        }
     }
 }
