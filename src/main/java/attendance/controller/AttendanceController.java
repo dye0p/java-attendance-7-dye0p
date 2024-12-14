@@ -8,6 +8,7 @@ import attendance.util.CrewFileReader;
 import attendance.view.InputView;
 import attendance.view.OutputView;
 import camp.nextstep.edu.missionutils.DateTimes;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -53,13 +54,42 @@ public class AttendanceController {
             attendances.isContain(name);
 
             //수정하려는 날짜 입력
-            String date = inputView.updateDate();
+            int date = inputView.updateDate();
 
             //해당 닉네임에 대한 일의 출석이 존재하는지 확인한다.
-            Attendance attendanceBy = attendances.findAttendanceBy(name, date); //입력한 일자에 출석한 크루
+            Attendance attendanceBy = attendances.findAttendanceBy(name, date); //입력한 일자에 출석한
+
+            Attendance copyAttendance = new Attendance(attendanceBy.getName(),
+                    attendanceBy.getYear(),
+                    attendanceBy.getMonth(),
+                    attendanceBy.getDate(),
+                    attendanceBy.getHour(),
+                    attendanceBy.getMinute(),
+                    attendanceBy.getStatus()); //원본
 
             //수정할 시간 입력
             String updateTime = inputView.updateTime();
+
+            //시간 수정
+            String[] updateTimeSplit = updateTime.split(":");
+
+            int updateHour = Integer.parseInt(updateTimeSplit[0]);
+            int updateMinute = Integer.parseInt(updateTimeSplit[1]);
+
+            attendanceBy.setHour(updateHour);
+            attendanceBy.setMinute(updateMinute);
+
+            //상태 수정
+            LocalDate localDate = LocalDate.of(2024, attendanceBy.getMonth(), attendanceBy.getDate());
+            int value = localDate.getDayOfWeek().getValue();
+
+            String updateDayOfWeek = DayOfWeek.of(value);
+            String updateStatus = AttendanceStatus.calculateStatus(updateDayOfWeek, updateMinute, updateMinute);
+
+            attendanceBy.setStatus(updateStatus);
+
+            //수정 후 출력
+            outputView.printUpdateResult(copyAttendance, attendanceBy);
 
         }
     }
@@ -99,15 +129,15 @@ public class AttendanceController {
         //월요일이라면 13시 이후 부터 지각,초과 처리
         //화~금 이라면 10시 이후 부터 지각,초과 처리
         //13:00 분 안에 출석인지
-        String status = AttendanceStatus.calculateStatus(dayOfWeek, goTimeSplit);
+        int hour = Integer.parseInt(goTimeSplit[0]);
+        int minute = Integer.parseInt(goTimeSplit[1]);
+
+        String status = AttendanceStatus.calculateStatus(dayOfWeek, hour, minute);
         outputView.printTodayAttendanceResult(monthValue, dayOfMonth, dayOfWeek, goTime, status);
 
         //출석이 완료되면
         //출석부에 기록함
-        int hour = Integer.parseInt(goTimeSplit[0]);
-        int minute = Integer.parseInt(goTimeSplit[1]);
-
-        Attendance attendance = new Attendance(name, 2024, monthValue, dayOfMonth, hour, minute);
+        Attendance attendance = new Attendance(name, 2024, monthValue, dayOfMonth, hour, minute, status);
         attendances.updateAttendance(attendance);
     }
 }

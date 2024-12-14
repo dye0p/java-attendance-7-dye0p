@@ -41,10 +41,12 @@ public class InputView {
         return Console.readLine().trim();
     }
 
-    public String updateDate() {
+    public int updateDate() {
         System.out.println("수정하려는 날짜(일)를 입력해 주세요.");
 
-        return Console.readLine();
+        String date = Console.readLine();
+
+        return Integer.parseInt(date);
 
     }
 

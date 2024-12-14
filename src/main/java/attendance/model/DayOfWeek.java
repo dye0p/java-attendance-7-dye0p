@@ -15,7 +15,9 @@ public enum DayOfWeek {
     }
 
     public static String of(int date) {
-        DayOfWeek dayOfWeek = Arrays.stream(values()).filter(value -> value.dateValue == date).findFirst()
+        DayOfWeek dayOfWeek = Arrays.stream(values())
+                .filter(value -> value.dateValue == date)
+                .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 요일 입니다."));
 
         return dayOfWeek.value;

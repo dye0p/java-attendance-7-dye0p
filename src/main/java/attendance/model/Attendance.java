@@ -51,4 +51,12 @@ public class Attendance {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
+    }
 }
