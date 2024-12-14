@@ -90,6 +90,8 @@ public class AttendanceController {
         //수정하려는 날짜 입력
         int date = inputView.updateDate();
 
+        valdiateFuture(date);
+
         //해당 닉네임에 대한 일의 출석이 존재하는지 확인한다.
         Attendance attendanceBy = attendances.findAttendanceBy(name, date); //입력한 일자에 출석한
 
@@ -127,14 +129,21 @@ public class AttendanceController {
 
     }
 
+    private void valdiateFuture(int date) {
+        LocalDateTime now = DateTimes.now();
+        int dayOfMonth = now.getDayOfMonth();
+
+        if (date > dayOfMonth) {
+            throw new IllegalArgumentException("[ERROR] 아직 수정할 수 없습니다.");
+        }
+    }
+
     private void optionOne(String dayOfWeek, int monthValue, int dayOfMonth, Attendances attendances) {
         //등교 날짜인지 확인
         if (dayOfWeek.equals("토요일") || dayOfWeek.equals("일요일")) {
             String format = String.format("[ERROR] %d월 %d일 %s은 등교일이 아닙니다.", monthValue, dayOfMonth, dayOfWeek);
             throw new IllegalArgumentException(format);
         }
-
-        //등교 날짜라면
 
         //닉네임 입력
         String name = inputView.readNickName();
