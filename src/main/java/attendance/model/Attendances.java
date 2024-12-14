@@ -24,4 +24,14 @@ public class Attendances {
             throw new IllegalArgumentException("[ERROR] 등록되지 않은 닉네임입니다.");
         }
     }
+
+    public void updateAttendance(Attendance attendance) {
+        attendances.add(attendance);
+    }
+
+    public void findAttendanceBy(String name, String date) {
+
+        //해당 닉네임을 찾는다.
+
+    }
 }

@@ -3,18 +3,43 @@ package attendance.model;
 public class Attendance {
 
     private final String name;
-    private String dateTime;
+    private final int year;
+    private final int month;
+    private final int date;
+    private final int hour;
+    private final int minute;
 
-    public Attendance(String name, String dateTime) {
+
+    public Attendance(String name, int year, int month, int date, int hour, int minute) {
         this.name = name;
-        this.dateTime = dateTime;
+        this.year = year;
+        this.month = month;
+        this.date = date;
+        this.hour = hour;
+        this.minute = minute;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getDateTime() {
-        return dateTime;
+    public int getYear() {
+        return year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public int getDate() {
+        return date;
+    }
+
+    public int getHour() {
+        return hour;
+    }
+
+    public int getMinute() {
+        return minute;
     }
 }
