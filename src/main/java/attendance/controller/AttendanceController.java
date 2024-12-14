@@ -53,27 +53,31 @@ public class AttendanceController {
 
             //기능 3번인 경우
             if (option.equals("3")) {
-                //출석부를 확인할 닉네임 입력
-                String name = inputView.readNickName();
-
-                //해당 닉네임을 찾는다.
-                attendances.isContain(name);
-
-                //해당 닉네임에 해당하는 출석 기록을 출력한다.
-                //출석 기록을 가져온다. (시작부터 전날까지)
-
-                LocalDateTime nowDate = DateTimes.now();
-                int nowDayOfMonth = nowDate.getDayOfMonth();
-
-                List<Attendance> attendanceResultBy = attendances.getAttendanceResultBy(nowDayOfMonth, name);
-                AttendanceResults attendanceResult = new AttendanceResults(attendanceResultBy);
-                outputView.printAttendanceResult(nowDayOfMonth, attendanceResult);
+                optionThree();
             }
 
             if (option.equals("Q")) {
                 break;
             }
         }
+    }
+
+    private void optionThree() {
+        //출석부를 확인할 닉네임 입력
+        String name = inputView.readNickName();
+
+        //해당 닉네임을 찾는다.
+        attendances.isContain(name);
+
+        //해당 닉네임에 해당하는 출석 기록을 출력한다.
+        //출석 기록을 가져온다. (시작부터 전날까지)
+
+        LocalDateTime nowDate = DateTimes.now();
+        int nowDayOfMonth = nowDate.getDayOfMonth();
+
+        List<Attendance> attendanceResultBy = attendances.getAttendanceResultBy(nowDayOfMonth, name);
+        AttendanceResults attendanceResult = new AttendanceResults(attendanceResultBy);
+        outputView.printAttendanceResult(nowDayOfMonth, attendanceResult);
     }
 
     private void optionTwo() {
