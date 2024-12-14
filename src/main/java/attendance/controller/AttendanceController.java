@@ -38,6 +38,13 @@ public class AttendanceController {
 
         //기능이 1번인 경우
         if (option.equals("1")) {
+
+            //등교 날짜인지 확인
+            if (dayOfWeek.equals("토요일") || dayOfWeek.equals("일요일")) {
+                String format = String.format("[ERROR] %d월 %d일 %s은 등교일이 아닙니다.", monthValue, dayOfMonth, dayOfWeek);
+                throw new IllegalArgumentException(format);
+            }
+
             //닉네임 입력
             String name = inputView.readNickName();
 

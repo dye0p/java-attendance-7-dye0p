@@ -28,4 +28,10 @@ public class InputView {
 
         return Console.readLine().trim();
     }
+
+    public String readGoTime() {
+        System.out.println("등교 시간을 입력해 주세요.");
+        
+        return Console.readLine().trim();
+    }
 }
