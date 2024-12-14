@@ -14,7 +14,7 @@ public class OutputView {
     private static final String NEXT_LINE = System.lineSeparator();
 
     public void printToday(int monthValue, int dayOfMonth, String dayOfWeek) {
-        String format = String.format("오늘은 %d월 %d일 %s입니다. 기능을 선택해 주세요", monthValue, dayOfMonth, dayOfWeek);
+        String format = String.format(NEXT_LINE + "오늘은 %d월 %d일 %s입니다. 기능을 선택해 주세요", monthValue, dayOfMonth, dayOfWeek);
         System.out.println(format);
     }
 
@@ -76,7 +76,8 @@ public class OutputView {
     }
 
     public void printAttendanceResult(int nowDayOfMonth, AttendanceResults attendanceResultBy) {
-        String name = String.format("이번 달 %s의 출석 기록입니다.", attendanceResultBy.getAttendancesResult().get(0).getName());
+        String name = String.format(NEXT_LINE + "이번 달 %s의 출석 기록입니다.",
+                attendanceResultBy.getAttendancesResult().get(0).getName());
 
         int attendanceCount = 0;
         int lateCount = 0;
@@ -178,6 +179,6 @@ public class OutputView {
         System.out.println(lateCountFormat);
         System.out.println(absentCountFormat);
 
-        System.out.println(subjects);
+        System.out.println(NEXT_LINE + subjects + "입니다.");
     }
 }
