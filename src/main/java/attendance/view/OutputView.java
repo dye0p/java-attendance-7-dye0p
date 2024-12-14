@@ -114,18 +114,10 @@ public class OutputView {
                 hour = "0" + hour;
             }
 
-            if (attendance.getHour().equals("--")) {
-                hour = "--";
-            }
-
             String minute = String.valueOf(attendance.getMinute());
 
             if (minute.length() == 1) {
                 minute = "0" + minute;
-            }
-
-            if (attendance.getMinute().equals("--")) {
-                minute = "--";
             }
 
             String status = attendance.getStatus();
