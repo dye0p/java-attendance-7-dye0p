@@ -12,26 +12,26 @@ public enum AttendanceStatus {
         this.status = status;
     }
 
-    public static String calculateStatus(String dayOfWeek, String[] goTimeSplit) {
+    public static String calculateStatus(String dayOfWeek, int hour, int minute) {
 
         if (dayOfWeek.equals("월요일")) {
-            if (Integer.parseInt(goTimeSplit[0]) <= 13 && Integer.parseInt(goTimeSplit[1]) <= 0) {
+            if (hour <= 13 && minute <= 0) {
                 return AttendanceStatus.ATTENDANCE.status;
             }
 
-            if (Integer.parseInt(goTimeSplit[0]) <= 13 && Integer.parseInt(goTimeSplit[1]) > 0
-                    || Integer.parseInt(goTimeSplit[0]) <= 13 && Integer.parseInt(goTimeSplit[1]) <= 30) {
+            if (hour <= 13 && minute > 0
+                    || hour <= 13 && minute <= 30) {
                 return AttendanceStatus.LATE.status;
             }
             return ABSENT.status;
         }
 
-        if (Integer.parseInt(goTimeSplit[0]) <= 10 && Integer.parseInt(goTimeSplit[1]) <= 0) {
+        if (hour <= 10 && minute <= 0) {
             return AttendanceStatus.ATTENDANCE.status;
         }
 
-        if (Integer.parseInt(goTimeSplit[0]) <= 10 && Integer.parseInt(goTimeSplit[1]) > 0
-                || Integer.parseInt(goTimeSplit[0]) <= 10 && Integer.parseInt(goTimeSplit[1]) <= 30) {
+        if (hour <= 10 && minute > 0
+                || hour <= 10 && minute <= 30) {
             return AttendanceStatus.LATE.status;
         }
 

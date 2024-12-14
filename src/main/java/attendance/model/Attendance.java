@@ -6,17 +6,18 @@ public class Attendance {
     private final int year;
     private final int month;
     private final int date;
-    private final int hour;
-    private final int minute;
+    private int hour;
+    private int minute;
+    private String status;
 
-
-    public Attendance(String name, int year, int month, int date, int hour, int minute) {
+    public Attendance(String name, int year, int month, int date, int hour, int minute, String status) {
         this.name = name;
         this.year = year;
         this.month = month;
         this.date = date;
         this.hour = hour;
         this.minute = minute;
+        this.status = status;
     }
 
     public String getName() {
@@ -41,5 +42,13 @@ public class Attendance {
 
     public int getMinute() {
         return minute;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

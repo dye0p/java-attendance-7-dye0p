@@ -2,10 +2,13 @@ package attendance.util;
 
 import attendance.exception.ErrorMessage;
 import attendance.model.Attendance;
+import attendance.model.AttendanceStatus;
+import attendance.model.DayOfWeek;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,13 +39,19 @@ public class CrewFileReader {
                 int month = Integer.parseInt(yearMonthDateSplit[1]);
                 int date = Integer.parseInt(yearMonthDateSplit[2]);
 
+                LocalDate localDate = LocalDate.of(year, month, date);
+                int dayOfWeekValue = localDate.getDayOfWeek().getValue();
+                String dayOfWeek = DayOfWeek.of(dayOfWeekValue);
+
                 String time = dateTimeSplit[1];
                 String[] timeSplit = time.split(":");
 
                 int hour = Integer.parseInt(timeSplit[0]);
                 int minute = Integer.parseInt(timeSplit[1]);
 
-                Attendance crew = new Attendance(name, year, month, date, hour, minute);
+                String status = AttendanceStatus.calculateStatus(dayOfWeek, hour, minute);
+
+                Attendance crew = new Attendance(name, year, month, date, hour, minute, status);
 
                 attendances.add(crew);
             }
