@@ -164,7 +164,12 @@ public class AttendanceController {
         //시간 범위를 초과하면
         if (Integer.parseInt(goTimeSplit[0]) > 24 || Integer.parseInt(goTimeSplit[1]) > 60) {
             throw new IllegalArgumentException("[ERROR] 잘못된 형식을 입력하였습니다.");
+        }
 
+        //캠퍼스 운영 시간이 아닌 경우
+        if ((Integer.parseInt(goTimeSplit[0]) < 8) ||
+                (Integer.parseInt(goTimeSplit[0]) >= 23 && Integer.parseInt(goTimeSplit[1]) > 0)) {
+            throw new IllegalArgumentException("[ERROR] 캠퍼스 운영 시간에만 출석이 가능합니다.");
         }
 
         //등교 가능 날짜와 가능 시간이라면 출석처리
