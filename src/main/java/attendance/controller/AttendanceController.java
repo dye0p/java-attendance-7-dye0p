@@ -25,83 +25,70 @@ public class AttendanceController {
     }
 
     public void run() {
-        CrewFileReader crewFileReader = new CrewFileReader();
-        List<Attendance> attendanceList = crewFileReader.attendancesReader();
-        attendances = new Attendances(attendanceList);
+        initializeAttendance();
 
-        //오늘의 날짜를 가져옴.
         LocalDateTime now = DateTimes.now();
+        int monthValue = now.getMonthValue();
+        int dayOfMonth = now.getDayOfMonth();
+        String dayOfWeek = DayOfWeek.of(now.getDayOfWeek().getValue());
 
-        int monthValue = now.getMonthValue(); //월
-        int dayOfMonth = now.getDayOfMonth(); //일
-        String dayOfWeek = DayOfWeek.of(now.getDayOfWeek().getValue()); //요일
+        playAttendance(monthValue, dayOfMonth, dayOfWeek);
+    }
 
-        //기능 선택 입력
+    private void playAttendance(int monthValue, int dayOfMonth, String dayOfWeek) {
         while (true) {
             outputView.printToday(monthValue, dayOfMonth, dayOfWeek);
             String option = inputView.readOption();
 
-            //기능이 1번인 경우
             if (option.equals("1")) {
                 optionOne(dayOfWeek, monthValue, dayOfMonth, attendances);
             }
-
-            //기능 2번인 경우
             if (option.equals("2")) {
                 optionTwo();
             }
-
-            //기능 3번인 경우
             if (option.equals("3")) {
                 optionThree();
             }
-
             if (option.equals("Q")) {
                 break;
             }
         }
     }
 
-    private void optionThree() {
-        //출석부를 확인할 닉네임 입력
-        String name = inputView.readNickName();
+    private void initializeAttendance() {
+        CrewFileReader crewFileReader = new CrewFileReader();
+        List<Attendance> attendanceList = crewFileReader.attendancesReader();
+        attendances = new Attendances(attendanceList);
+    }
 
-        //해당 닉네임을 찾는다.
+    private void optionOne(String dayOfWeek, int monthValue, int dayOfMonth, Attendances attendances) {
+        validatePossibleSchool(dayOfWeek, monthValue, dayOfMonth);
+
+        String name = inputView.readNickName();
         attendances.isContain(name);
 
-        //해당 닉네임에 해당하는 출석 기록을 출력한다.
-        //출석 기록을 가져온다. (시작부터 전날까지)
+        String goTime = inputView.readGoTime();
+        String[] goTimeSplit = validateGoTimm(goTime);
 
-        LocalDateTime nowDate = DateTimes.now();
-        int nowDayOfMonth = nowDate.getDayOfMonth();
+        int hour = Integer.parseInt(goTimeSplit[0]);
+        int minute = Integer.parseInt(goTimeSplit[1]);
 
-        List<Attendance> attendanceResultBy = attendances.getAttendanceResultBy(nowDayOfMonth, name);
-        AttendanceResults attendanceResult = new AttendanceResults(attendanceResultBy);
-        outputView.printAttendanceResult(nowDayOfMonth, attendanceResult);
+        String status = AttendanceStatus.calculateStatus(dayOfWeek, hour, minute);
+        outputView.printTodayAttendanceResult(monthValue, dayOfMonth, dayOfWeek, goTime, status);
+
+        Attendance attendance = new Attendance(name, 2024, monthValue, dayOfMonth, hour, minute, status);
+        attendances.updateAttendance(attendance);
     }
 
     private void optionTwo() {
-        //출석을 수정하려는 닉네임
         String name = inputView.readUpdateNickName();
-
-        //닉네임이 존재하는지 확인한다.
         attendances.isContain(name);
 
-        //수정하려는 날짜 입력
         int date = inputView.updateDate();
+        validateFuture(date);
 
-        valdiateFuture(date);
-
-        //해당 닉네임에 대한 일의 출석이 존재하는지 확인한다.
-        Attendance attendanceBy = attendances.findAttendanceBy(name, date); //입력한 일자에 출석한
-
-        Attendance copyAttendance = new Attendance(attendanceBy.getName(),
-                attendanceBy.getYear(),
-                attendanceBy.getMonth(),
-                attendanceBy.getDate(),
-                attendanceBy.getHour(),
-                attendanceBy.getMinute(),
-                attendanceBy.getStatus()); //원본
+        Attendance attendanceBy = attendances.findAttendanceBy(name, date);
+        Attendance copyAttendance = createCopyAttendance(attendanceBy);
 
         //수정할 시간 입력
         String updateTime = inputView.updateTime();
@@ -115,7 +102,6 @@ public class AttendanceController {
         attendanceBy.setHour(updateHour);
         attendanceBy.setMinute(updateMinute);
 
-        //상태 수정
         LocalDate localDate = LocalDate.of(2024, attendanceBy.getMonth(), attendanceBy.getDate());
         int value = localDate.getDayOfWeek().getValue();
 
@@ -124,12 +110,41 @@ public class AttendanceController {
 
         attendanceBy.setStatus(updateStatus);
 
-        //수정 후 출력
         outputView.printUpdateResult(copyAttendance, attendanceBy);
-
     }
 
-    private void valdiateFuture(int date) {
+    private void optionThree() {
+        String name = inputView.readNickName();
+
+        attendances.isContain(name);
+
+        LocalDateTime nowDate = DateTimes.now();
+        int nowDayOfMonth = nowDate.getDayOfMonth();
+
+        List<Attendance> attendanceResultBy = attendances.getAttendanceResultBy(nowDayOfMonth, name);
+        AttendanceResults attendanceResult = new AttendanceResults(attendanceResultBy);
+
+        outputView.printAttendanceResult(nowDayOfMonth, attendanceResult);
+    }
+
+    private Attendance createCopyAttendance(Attendance attendanceBy) {
+        return new Attendance(attendanceBy.getName(),
+                attendanceBy.getYear(),
+                attendanceBy.getMonth(),
+                attendanceBy.getDate(),
+                attendanceBy.getHour(),
+                attendanceBy.getMinute(),
+                attendanceBy.getStatus());
+    }
+
+    private void validatePossibleSchool(String dayOfWeek, int monthValue, int dayOfMonth) {
+        if (dayOfWeek.equals("토요일") || dayOfWeek.equals("일요일")) {
+            String format = String.format("[ERROR] %d월 %d일 %s은 등교일이 아닙니다.", monthValue, dayOfMonth, dayOfWeek);
+            throw new IllegalArgumentException(format);
+        }
+    }
+
+    private void validateFuture(int date) {
         LocalDateTime now = DateTimes.now();
         int dayOfMonth = now.getDayOfMonth();
 
@@ -138,54 +153,21 @@ public class AttendanceController {
         }
     }
 
-    private void optionOne(String dayOfWeek, int monthValue, int dayOfMonth, Attendances attendances) {
-        //등교 날짜인지 확인
-        if (dayOfWeek.equals("토요일") || dayOfWeek.equals("일요일")) {
-            String format = String.format("[ERROR] %d월 %d일 %s은 등교일이 아닙니다.", monthValue, dayOfMonth, dayOfWeek);
-            throw new IllegalArgumentException(format);
-        }
-
-        //닉네임 입력
-        String name = inputView.readNickName();
-
-        //닉네임 존재 확인
-        attendances.isContain(name);
-
-        //등교 시간 입력
-        String goTime = inputView.readGoTime();
-
-        //등교시간 유효성 검사
+    private String[] validateGoTimm(String goTime) {
         String[] goTimeSplit = goTime.split(":");
 
         if (goTimeSplit.length != 2) {
             throw new IllegalArgumentException("[ERROR] 잘못된 형식을 입력하였습니다.");
         }
 
-        //시간 범위를 초과하면
         if (Integer.parseInt(goTimeSplit[0]) > 24 || Integer.parseInt(goTimeSplit[1]) > 60) {
             throw new IllegalArgumentException("[ERROR] 잘못된 형식을 입력하였습니다.");
         }
 
-        //캠퍼스 운영 시간이 아닌 경우
         if ((Integer.parseInt(goTimeSplit[0]) < 8) ||
                 (Integer.parseInt(goTimeSplit[0]) >= 23 && Integer.parseInt(goTimeSplit[1]) > 0)) {
             throw new IllegalArgumentException("[ERROR] 캠퍼스 운영 시간에만 출석이 가능합니다.");
         }
-
-        //등교 가능 날짜와 가능 시간이라면 출석처리
-        //월요일이라면 13시 이후 부터 지각,초과 처리
-        //화~금 이라면 10시 이후 부터 지각,초과 처리
-        //13:00 분 안에 출석인지
-        int hour = Integer.parseInt(goTimeSplit[0]);
-        int minute = Integer.parseInt(goTimeSplit[1]);
-
-        String status = AttendanceStatus.calculateStatus(dayOfWeek, hour, minute);
-        outputView.printTodayAttendanceResult(monthValue, dayOfMonth, dayOfWeek, goTime, status);
-
-        //출석이 완료되면
-        //출석부에 기록함
-        Attendance attendance = new Attendance(name, 2024, monthValue, dayOfMonth, hour, minute, status);
-        attendances.updateAttendance(attendance);
-
+        return goTimeSplit;
     }
 }
