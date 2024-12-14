@@ -20,7 +20,10 @@ public class Attendances {
                 matchCount++;
             }
         }
+        validateContain(matchCount);
+    }
 
+    private void validateContain(int matchCount) {
         if (matchCount == 0) {
             throw new IllegalArgumentException("[ERROR] 등록되지 않은 닉네임입니다.");
         }
@@ -31,18 +34,10 @@ public class Attendances {
     }
 
     public Attendance findAttendanceBy(String name, int date) {
-        for (Attendance attendance : attendances) {
-            if (attendance.getName().equals(name) && attendance.getDate() == date) {
-                return attendance;
-            }
-        }
-
-        throw new IllegalArgumentException("[ERROR] 등록되지 않은 닉네임입니다.");
+        return validateName(name, date);
     }
 
     public List<Attendance> getAttendanceResultBy(int nowDate, String name) {
-        //평일이면서 등교를 하지 않은 날은 결석으로 간주한다.
-
         List<Attendance> result = new ArrayList<>();
 
         for (Attendance attendance : attendances) {
@@ -51,5 +46,15 @@ public class Attendances {
             }
         }
         return result;
+    }
+
+    private Attendance validateName(String name, int date) {
+        for (Attendance attendance : attendances) {
+            if (attendance.getName().equals(name) && attendance.getDate() == date) {
+                return attendance;
+            }
+        }
+
+        throw new IllegalArgumentException("[ERROR] 등록되지 않은 닉네임입니다.");
     }
 }
