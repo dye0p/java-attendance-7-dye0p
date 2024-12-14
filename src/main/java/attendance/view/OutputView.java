@@ -69,7 +69,7 @@ public class OutputView {
 
         String status2 = attendanceBy.getStatus();
 
-        String format1 = String.format(" -> %s:%s %s 수정완료!",
+        String format1 = String.format(" -> %s:%s %s 수정 완료!",
                 hour2, minute2, status2);
 
         System.out.println(format + format1);
@@ -78,6 +78,9 @@ public class OutputView {
     public void printAttendanceResult(int nowDayOfMonth, AttendanceResults attendanceResultBy) {
         String name = String.format("이번 달 %s의 출석 기록입니다.", attendanceResultBy.getAttendancesResult().get(0).getName());
 
+        int attendanceCount = 0;
+        int lateCount = 0;
+        int absentCount = 0;
         System.out.println(name);
 
         StringJoiner sj = new StringJoiner(NEXT_LINE);
@@ -127,12 +130,36 @@ public class OutputView {
 
             String status = attendance.getStatus();
 
+            if (status.equals("(출석)")) {
+                attendanceCount++;
+            }
+
+            if (status.equals("(지각)")) {
+                lateCount++;
+            }
+
+            if (status.equals("(결석)")) {
+                absentCount++;
+            }
+
             String format = String.format("12월 %s일 %s %s:%s %s",
                     date, dayOfWeek, hour, minute, status);
 
             sj.add(format);
         }
 
+        String attendanceCountFormat = String.format("출석: %d회", attendanceCount);
+        String lateCountFormat = String.format("지각: %d회", lateCount);
+        String absentCountFormat = String.format("결석: %d회", absentCount);
+
+        //출석부 결과 출력
         System.out.println(NEXT_LINE + sj);
+
+        //현황 출력
+        System.out.println(NEXT_LINE + attendanceCountFormat);
+        System.out.println(lateCountFormat);
+        System.out.println(absentCountFormat);
+
+        System.out.println("경고 대상자");
     }
 }
