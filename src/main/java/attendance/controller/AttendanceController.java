@@ -1,6 +1,7 @@
 package attendance.controller;
 
 import attendance.model.Attendance;
+import attendance.model.AttendanceStatus;
 import attendance.model.Attendances;
 import attendance.model.DayOfWeek;
 import attendance.util.CrewFileReader;
@@ -55,7 +56,11 @@ public class AttendanceController {
             String date = inputView.updateDate();
 
             //해당 닉네임에 대한 일의 출석이 존재하는지 확인한다.
-            attendances.findAttendanceBy(name, date);
+            Attendance attendanceBy = attendances.findAttendanceBy(name, date); //입력한 일자에 출석한 크루
+
+            //수정할 시간 입력
+            String updateTime = inputView.updateTime();
+
         }
     }
 
@@ -93,25 +98,12 @@ public class AttendanceController {
         //등교 가능 날짜와 가능 시간이라면 출석처리
         //월요일이라면 13시 이후 부터 지각,초과 처리
         //화~금 이라면 10시 이후 부터 지각,초과 처리
-        if (dayOfWeek.equals("월요일")) {
-            //13:00 분 안에 출석인지
-            String check = "출석";
-            if (Integer.parseInt(goTimeSplit[0]) <= 13 && Integer.parseInt(goTimeSplit[1]) <= 0) {
-                outputView.printTodayAttendanceResult(monthValue, dayOfMonth, dayOfWeek, goTime, check);
-            }
-        }
-
-        if (!dayOfWeek.equals("월요일")) {
-            //10:00분 안에 출석인지
-            String check = "(출석)";
-            if (Integer.parseInt(goTimeSplit[0]) <= 10 && Integer.parseInt(goTimeSplit[1]) <= 0) {
-                outputView.printTodayAttendanceResult(monthValue, dayOfMonth, dayOfWeek, goTime, check);
-            }
-        }
+        //13:00 분 안에 출석인지
+        String status = AttendanceStatus.calculateStatus(dayOfWeek, goTimeSplit);
+        outputView.printTodayAttendanceResult(monthValue, dayOfMonth, dayOfWeek, goTime, status);
 
         //출석이 완료되면
         //출석부에 기록함
-
         int hour = Integer.parseInt(goTimeSplit[0]);
         int minute = Integer.parseInt(goTimeSplit[1]);
 

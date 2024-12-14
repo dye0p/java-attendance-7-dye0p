@@ -29,9 +29,17 @@ public class Attendances {
         attendances.add(attendance);
     }
 
-    public void findAttendanceBy(String name, String date) {
-
+    public Attendance findAttendanceBy(String name, String date) {
         //해당 닉네임을 찾는다.
 
+        //출석부에 해당 크루가 매개변수의 date에 출석한 기록이 있는지 확인한다.
+
+        for (Attendance attendance : attendances) {
+            if (attendance.getName().equals(name) && attendance.getDate() == Integer.parseInt(date)) {
+                return attendance;
+            }
+        }
+
+        throw new IllegalArgumentException("[ERROR] 등록되지 않은 닉네임입니다.");
     }
 }
