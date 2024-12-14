@@ -87,7 +87,6 @@ public class OutputView {
         StringJoiner sj = new StringJoiner(NEXT_LINE);
 
         List<AttendanceResult> resultALl = new ArrayList<>();
-        //2일부터 결과를 돌면서 해당 날짜의 출근이 존재하는지 찾는다.
         for (int i = 2; i < nowDayOfMonth; i++) {
             AttendanceResult contain = attendanceResultBy.isContain(name, i);
             if (contain != null) {

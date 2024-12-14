@@ -48,32 +48,4 @@ public class AttendanceResult {
     public String getStatus() {
         return status;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setMonth(int month) {
-        this.month = month;
-    }
-
-    public void setDate(int date) {
-        this.date = date;
-    }
-
-    public void setDayOfWeek(String dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
-    }
-
-    public void setHour(String hour) {
-        this.hour = hour;
-    }
-
-    public void setMinute(String minute) {
-        this.minute = minute;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }

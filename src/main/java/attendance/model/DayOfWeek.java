@@ -28,8 +28,4 @@ public enum DayOfWeek {
 
         return dayOfWeek.value;
     }
-
-    public static boolean isWeekday(int value) {
-        return value != 6 && value != 7;
-    }
 }
