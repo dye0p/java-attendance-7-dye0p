@@ -1,5 +1,6 @@
 package attendance.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Attendances {
@@ -42,4 +43,21 @@ public class Attendances {
 
         throw new IllegalArgumentException("[ERROR] 등록되지 않은 닉네임입니다.");
     }
+
+    public List<Attendance> getAttendanceResultBy(int nowDate, String name) {
+        //평일이면서 등교를 하지 않은 날은 결석으로 간주한다.
+
+        List<Attendance> result = new ArrayList<>();
+
+        for (Attendance attendance : attendances) {
+            if (attendance.getName().equals(name)) {
+                result.add(attendance);
+            }
+        }
+        return result;
+    }
+
+    // 등교하지 않아 출석 기록이 없는 날은 결석으로 간주한다.
+
+
 }

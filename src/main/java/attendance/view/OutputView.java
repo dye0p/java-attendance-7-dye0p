@@ -1,8 +1,13 @@
 package attendance.view;
 
 import attendance.model.Attendance;
+import attendance.model.AttendanceResult;
+import attendance.model.AttendanceResults;
 import attendance.model.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
 
 public class OutputView {
 
@@ -68,5 +73,66 @@ public class OutputView {
                 hour2, minute2, status2);
 
         System.out.println(format + format1);
+    }
+
+    public void printAttendanceResult(int nowDayOfMonth, AttendanceResults attendanceResultBy) {
+        String name = String.format("이번 달 %s의 출석 기록입니다.", attendanceResultBy.getAttendancesResult().get(0).getName());
+
+        System.out.println(name);
+
+        StringJoiner sj = new StringJoiner(NEXT_LINE);
+
+        List<AttendanceResult> resultALl = new ArrayList<>();
+        //2일부터 결과를 돌면서 해당 날짜의 출근이 존재하는지 찾는다.
+        for (int i = 2; i < nowDayOfMonth; i++) {
+            AttendanceResult contain = attendanceResultBy.isContain(name, i);
+            if (contain != null) {
+                resultALl.add(contain);
+            }
+        }
+
+        //12월 02일 월요일 13:00 (출석)
+        for (AttendanceResult attendance : resultALl) {
+
+            String date = String.valueOf(attendance.getDate());
+
+            if (date.length() == 1) {
+                date = "0" + date;
+            }
+
+            LocalDate localDate = LocalDate.of(2024, attendance.getMonth(), attendance.getDate());
+            int value = localDate.getDayOfWeek().getValue();
+
+            String dayOfWeek = DayOfWeek.of(value);
+
+            String hour = String.valueOf(attendance.getHour());
+
+            if (hour.length() == 1) {
+                hour = "0" + hour;
+            }
+
+            if (attendance.getHour().equals("--")) {
+                hour = "--";
+            }
+
+            String minute = String.valueOf(attendance.getMinute());
+
+            if (minute.length() == 1) {
+                minute = "0" + minute;
+            }
+
+            if (attendance.getMinute().equals("--")) {
+                minute = "--";
+            }
+
+            String status = attendance.getStatus();
+
+            String format = String.format("12월 %s일 %s %s:%s %s",
+                    date, dayOfWeek, hour, minute, status);
+
+            sj.add(format);
+        }
+
+        System.out.println(NEXT_LINE + sj);
     }
 }

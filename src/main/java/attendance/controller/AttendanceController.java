@@ -1,6 +1,7 @@
 package attendance.controller;
 
 import attendance.model.Attendance;
+import attendance.model.AttendanceResults;
 import attendance.model.AttendanceStatus;
 import attendance.model.Attendances;
 import attendance.model.DayOfWeek;
@@ -36,62 +37,90 @@ public class AttendanceController {
         String dayOfWeek = DayOfWeek.of(now.getDayOfWeek().getValue()); //요일
 
         //기능 선택 입력
-        outputView.printToday(monthValue, dayOfMonth, dayOfWeek);
-        String option = inputView.readOption();
+        while (true) {
+            outputView.printToday(monthValue, dayOfMonth, dayOfWeek);
+            String option = inputView.readOption();
 
-        //기능이 1번인 경우
-        if (option.equals("1")) {
-            optionOne(dayOfWeek, monthValue, dayOfMonth, attendances);
+            //기능이 1번인 경우
+            if (option.equals("1")) {
+                optionOne(dayOfWeek, monthValue, dayOfMonth, attendances);
+            }
+
+            //기능 2번인 경우
+            if (option.equals("2")) {
+                optionTwo();
+            }
+
+            //기능 3번인 경우
+            if (option.equals("3")) {
+                //출석부를 확인할 닉네임 입력
+                String name = inputView.readNickName();
+
+                //해당 닉네임을 찾는다.
+                attendances.isContain(name);
+
+                //해당 닉네임에 해당하는 출석 기록을 출력한다.
+                //출석 기록을 가져온다. (시작부터 전날까지)
+
+                LocalDateTime nowDate = DateTimes.now();
+                int nowDayOfMonth = nowDate.getDayOfMonth();
+
+                List<Attendance> attendanceResultBy = attendances.getAttendanceResultBy(nowDayOfMonth, name);
+                AttendanceResults attendanceResult = new AttendanceResults(attendanceResultBy);
+                outputView.printAttendanceResult(nowDayOfMonth, attendanceResult);
+            }
+
+            if (option.equals("Q")) {
+                break;
+            }
         }
+    }
 
-        //기능 2번인 경우
-        if (option.equals("2")) {
+    private void optionTwo() {
+        //출석을 수정하려는 닉네임
+        String name = inputView.readUpdateNickName();
 
-            //출석을 수정하려는 닉네임
-            String name = inputView.readUpdateNickName();
+        //닉네임이 존재하는지 확인한다.
+        attendances.isContain(name);
 
-            //닉네임이 존재하는지 확인한다.
-            attendances.isContain(name);
+        //수정하려는 날짜 입력
+        int date = inputView.updateDate();
 
-            //수정하려는 날짜 입력
-            int date = inputView.updateDate();
+        //해당 닉네임에 대한 일의 출석이 존재하는지 확인한다.
+        Attendance attendanceBy = attendances.findAttendanceBy(name, date); //입력한 일자에 출석한
 
-            //해당 닉네임에 대한 일의 출석이 존재하는지 확인한다.
-            Attendance attendanceBy = attendances.findAttendanceBy(name, date); //입력한 일자에 출석한
+        Attendance copyAttendance = new Attendance(attendanceBy.getName(),
+                attendanceBy.getYear(),
+                attendanceBy.getMonth(),
+                attendanceBy.getDate(),
+                attendanceBy.getHour(),
+                attendanceBy.getMinute(),
+                attendanceBy.getStatus()); //원본
 
-            Attendance copyAttendance = new Attendance(attendanceBy.getName(),
-                    attendanceBy.getYear(),
-                    attendanceBy.getMonth(),
-                    attendanceBy.getDate(),
-                    attendanceBy.getHour(),
-                    attendanceBy.getMinute(),
-                    attendanceBy.getStatus()); //원본
+        //수정할 시간 입력
+        String updateTime = inputView.updateTime();
 
-            //수정할 시간 입력
-            String updateTime = inputView.updateTime();
+        //시간 수정
+        String[] updateTimeSplit = updateTime.split(":");
 
-            //시간 수정
-            String[] updateTimeSplit = updateTime.split(":");
+        int updateHour = Integer.parseInt(updateTimeSplit[0]);
+        int updateMinute = Integer.parseInt(updateTimeSplit[1]);
 
-            int updateHour = Integer.parseInt(updateTimeSplit[0]);
-            int updateMinute = Integer.parseInt(updateTimeSplit[1]);
+        attendanceBy.setHour(updateHour);
+        attendanceBy.setMinute(updateMinute);
 
-            attendanceBy.setHour(updateHour);
-            attendanceBy.setMinute(updateMinute);
+        //상태 수정
+        LocalDate localDate = LocalDate.of(2024, attendanceBy.getMonth(), attendanceBy.getDate());
+        int value = localDate.getDayOfWeek().getValue();
 
-            //상태 수정
-            LocalDate localDate = LocalDate.of(2024, attendanceBy.getMonth(), attendanceBy.getDate());
-            int value = localDate.getDayOfWeek().getValue();
+        String updateDayOfWeek = DayOfWeek.of(value);
+        String updateStatus = AttendanceStatus.calculateStatus(updateDayOfWeek, updateMinute, updateMinute);
 
-            String updateDayOfWeek = DayOfWeek.of(value);
-            String updateStatus = AttendanceStatus.calculateStatus(updateDayOfWeek, updateMinute, updateMinute);
+        attendanceBy.setStatus(updateStatus);
 
-            attendanceBy.setStatus(updateStatus);
+        //수정 후 출력
+        outputView.printUpdateResult(copyAttendance, attendanceBy);
 
-            //수정 후 출력
-            outputView.printUpdateResult(copyAttendance, attendanceBy);
-
-        }
     }
 
     private void optionOne(String dayOfWeek, int monthValue, int dayOfMonth, Attendances attendances) {
@@ -139,5 +168,6 @@ public class AttendanceController {
         //출석부에 기록함
         Attendance attendance = new Attendance(name, 2024, monthValue, dayOfMonth, hour, minute, status);
         attendances.updateAttendance(attendance);
+
     }
 }

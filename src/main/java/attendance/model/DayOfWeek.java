@@ -4,7 +4,13 @@ import java.util.Arrays;
 
 public enum DayOfWeek {
 
-    MON("월요일", 1), TUE("화요일", 2), WED("수요일", 3), THU("목요일", 4), FRI("금요일", 5), SAT("토요일", 6), SUM("일요일", 7);
+    MON("월요일", 1),
+    TUE("화요일", 2),
+    WED("수요일", 3),
+    THU("목요일", 4),
+    FRI("금요일", 5),
+    SAT("토요일", 6),
+    SUM("일요일", 7);
 
     private final String value;
     private final int dateValue;
@@ -23,4 +29,7 @@ public enum DayOfWeek {
         return dayOfWeek.value;
     }
 
+    public static boolean isWeekday(int value) {
+        return value != 6 && value != 7;
+    }
 }

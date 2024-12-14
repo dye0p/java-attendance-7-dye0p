@@ -38,4 +38,8 @@ public enum AttendanceStatus {
         return ABSENT.status;
 
     }
+
+    public String getStatus() {
+        return status;
+    }
 }
