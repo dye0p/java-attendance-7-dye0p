@@ -16,12 +16,8 @@ public class AttendanceResults {
     }
 
     public AttendanceResult isContain(String name, int date) {
-
-        LocalDate localDate = LocalDate.of(2024, 12, date);
-        int value = localDate.getDayOfWeek().getValue();
-        String dayOfWeek = DayOfWeek.of(value);
-
-        if (dayOfWeek.equals("토요일") || dayOfWeek.equals("일요일")) {
+        String dayOfWeek = valdiateWeekend(date);
+        if (dayOfWeek == null) {
             return null;
         }
 
@@ -35,5 +31,15 @@ public class AttendanceResults {
         }
 
         return new AttendanceResult(name, 12, date, dayOfWeek, "--", "--", AttendanceStatus.ABSENT.getStatus());
+    }
+
+    private String valdiateWeekend(int date) {
+        LocalDate localDate = LocalDate.of(2024, 12, date);
+        int value = localDate.getDayOfWeek().getValue();
+        String dayOfWeek = DayOfWeek.of(value);
+        if (dayOfWeek.equals("토요일") || dayOfWeek.equals("일요일")) {
+            return null;
+        }
+        return dayOfWeek;
     }
 }
