@@ -136,6 +136,10 @@ public class OutputView {
 
             if (status.equals("(지각)")) {
                 lateCount++;
+                if (lateCount == 3) {
+                    absentCount++;
+                    lateCount = 0;
+                }
             }
 
             if (status.equals("(결석)")) {
@@ -152,6 +156,20 @@ public class OutputView {
         String lateCountFormat = String.format("지각: %d회", lateCount);
         String absentCountFormat = String.format("결석: %d회", absentCount);
 
+        String subjects = "";
+
+        if (absentCount == 2) {
+            subjects = "경고 대상자";
+        }
+
+        if (absentCount >= 3 && absentCount < 5) {
+            subjects = "면담 대상자";
+        }
+
+        if (absentCount >= 5) {
+            subjects = "제적 대상자";
+        }
+
         //출석부 결과 출력
         System.out.println(NEXT_LINE + sj);
 
@@ -160,6 +178,6 @@ public class OutputView {
         System.out.println(lateCountFormat);
         System.out.println(absentCountFormat);
 
-        System.out.println("경고 대상자");
+        System.out.println(subjects);
     }
 }
